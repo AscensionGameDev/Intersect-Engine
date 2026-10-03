@@ -2272,6 +2272,15 @@ public partial class Player : Entity, IPlayer
 
         var dx = Math.Abs(targetWorldX - myWorldX);
         var dy = Math.Abs(targetWorldY - myWorldY);
+
+        // Too far away to chase or auto-attack (e.g. a target clicked on the other side of the map): give up
+        // instead of walking all the way over there.
+        if (Math.Max(dx, dy) > MaxAutoAttackDistanceTiles)
+        {
+            IsAutoAttacking = false;
+            return false;
+        }
+
         var isAdjacent = dx <= 1 && dy <= 1 && (dx + dy > 0) &&
                           (dx == 0 || dy == 0 || Options.Instance.Map.EnableDiagonalMovement);
 
@@ -2522,6 +2531,23 @@ public partial class Player : Entity, IPlayer
     }
 
     private const long AutoAttackDoubleClickMs = 450;
+
+    /// <summary>Farthest target (in tiles) a held attack will chase, or a double-click auto-attack can start on.</summary>
+    private const int MaxAutoAttackDistanceTiles = 8;
+
+    private int WorldTileDistanceTo(Entity target)
+    {
+        var myMap = Maps.MapInstance.Get(MapId);
+        var targetMap = Maps.MapInstance.Get(target.MapId);
+        if (myMap == null || targetMap == null)
+        {
+            return int.MaxValue;
+        }
+
+        var dx = Math.Abs((target.X + (targetMap.GridX * MapWidth)) - (X + (myMap.GridX * MapWidth)));
+        var dy = Math.Abs((target.Y + (targetMap.GridY * MapHeight)) - (Y + (myMap.GridY * MapHeight)));
+        return Math.Max(dx, dy);
+    }
     private Guid _lastClickedEntityId;
     private long _lastEntityClickTime;
 
@@ -2625,7 +2651,9 @@ public partial class Player : Entity, IPlayer
 
                             if (isDoubleClick)
                             {
-                                IsAutoAttacking = (bestMatch as Entity)?.CanBeAttacked ?? false;
+                                // Auto-attack only starts on a target that is reasonably close.
+                                IsAutoAttacking = ((bestMatch as Entity)?.CanBeAttacked ?? false) &&
+                                                  WorldTileDistanceTo((Entity)bestMatch) <= MaxAutoAttackDistanceTiles;
                             }
 
                             return true;

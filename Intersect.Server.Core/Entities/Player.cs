@@ -5839,6 +5839,21 @@ public partial class Player : Entity
         return true;
     }
 
+    private long _lastWallWarningAt;
+
+    /// <summary>Tells the player (at most every 2 seconds) that a wall is in the way of their spell.</summary>
+    public void NotifySpellBlockedByWall()
+    {
+        var now = Timing.Global.Milliseconds;
+        if (now - _lastWallWarningAt < 2000)
+        {
+            return;
+        }
+
+        _lastWallWarningAt = now;
+        PacketSender.SendChatMsg(this, "Un obstacle bloque ton sort.", ChatMessageType.Error, CustomColors.Alerts.Error);
+    }
+
     private long _lastWeaponWarningAt;
 
     /// <summary>

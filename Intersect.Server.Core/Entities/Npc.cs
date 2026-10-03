@@ -682,9 +682,6 @@ public partial class Npc : Entity
         );
     }
 
-    /// <summary>Skirmisher flee threshold, used as a floor on top of whatever the descriptor configures.</summary>
-    private const byte SkirmisherFleeHealthPercentage = 40;
-
     private const float SkirmisherFleeSpeedMultiplier = 1.5f;
 
     public override float GetMovementTime()
@@ -1081,12 +1078,9 @@ public partial class Npc : Entity
 
     public bool IsFleeing()
     {
+        // The editor's "Flee Health %" is the only authority: 0 means this monster never flees, whatever its combat
+        // style. (Skirmishers used to be forced to flee at 40%, which the editor could not turn off.)
         var fleeThreshold = Descriptor.FleeHealthPercentage;
-        if (Descriptor.CombatStyle == NpcCombatStyle.Skirmisher)
-        {
-            // Skirmishers always know when to bolt, even if the author never set a flee percentage.
-            fleeThreshold = Math.Max(fleeThreshold, SkirmisherFleeHealthPercentage);
-        }
 
         if (fleeThreshold > 0)
         {
@@ -1328,7 +1322,8 @@ public partial class Npc : Entity
                                             {
                                                 if (!(blockingEntity?.IsDisposed ?? true))
                                                 {
-                                                    if (CanAttack(blockingEntity, default))
+                                                    // Never hit a blocker across a wall corner: go around it instead.
+                                                    if (IsOneBlockAway(blockingEntity) && CanAttack(blockingEntity, default))
                                                     {
                                                         var blockingEntityName = blockingEntity?.Name ?? "Unknown Blocking Entity";
                                                         var targetName = Target?.Name ?? "Unknown Target";

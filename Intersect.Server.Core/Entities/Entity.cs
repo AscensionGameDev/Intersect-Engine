@@ -2633,6 +2633,14 @@ public abstract partial class Entity : IEntity
                 reason = SpellCastFailureReason.OutOfRange;
                 return false;
             }
+
+            // A spell cannot pass through a wall: the target has to be reachable in a straight line.
+            if (IsLineBlockedByWall(MapId, X, Y, target.MapId, target.X, target.Y))
+            {
+                (this as Player)?.NotifySpellBlockedByWall();
+                reason = SpellCastFailureReason.InvalidTarget;
+                return false;
+            }
         }
 
         // We have no reason to stop the entity from casting!
@@ -3102,7 +3110,8 @@ public abstract partial class Entity : IEntity
                     {
                         if (spellTarget == null || spellTarget == entity)
                         {
-                            if (entity.GetDistanceTo(startMap, startX, startY) <= range)
+                            if (entity.GetDistanceTo(startMap, startX, startY) <= range &&
+                                !IsLineBlockedByWall(startMapId, startX, startY, entity.MapId, entity.X, entity.Y))
                             {
                                 //Check to handle a warp to spell
                                 if (spellBase.SpellType == SpellType.WarpTo)
@@ -3232,25 +3241,25 @@ public abstract partial class Entity : IEntity
             myTile.Translate(-2, -1); // Target UpLeft
             if (myTile.Matches(enemyTile))
             {
-                return true;
+                return !IsDiagonalCornerBlocked(-1, -1);
             }
 
             myTile.Translate(2, 0); // Target UpRight
             if (myTile.Matches(enemyTile))
             {
-                return true;
+                return !IsDiagonalCornerBlocked(1, -1);
             }
 
             myTile.Translate(-2, 2); // Target DownLeft
             if (myTile.Matches(enemyTile))
             {
-                return true;
+                return !IsDiagonalCornerBlocked(-1, 1);
             }
 
             myTile.Translate(2, 0); // Target DownRight
             if (myTile.Matches(enemyTile))
             {
-                return true;
+                return !IsDiagonalCornerBlocked(1, 1);
             }
         }
 
@@ -3472,9 +3481,119 @@ public abstract partial class Entity : IEntity
         var yDiff = Math.Abs(originY - targetY);
         var xDiff = Math.Abs(originX - targetX);
 
-        // Check if entities are one block away.
+        // Check if entities are one block away (a diagonal neighbour only counts when no wall blocks the corner).
         return (xDiff == 1 && yDiff == 0) || (xDiff == 0 && yDiff == 1) ||
-               (Options.Instance.Map.EnableDiagonalMovement && xDiff == 1 && yDiff == 1);
+               (Options.Instance.Map.EnableDiagonalMovement && xDiff == 1 && yDiff == 1 &&
+                !IsDiagonalCornerBlocked(Math.Sign(targetX - originX), Math.Sign(targetY - originY)));
+    }
+
+    /// <summary>
+    /// A tile that stops attacks and spells: a blocked map tile or a blocking animation tile. (Entities and
+    /// resources do not count - this is about solid walls, not about creatures standing in the way.)
+    /// </summary>
+    private static bool IsSolidForAttacks(Guid mapId, int x, int y)
+    {
+        if (!MapController.TryGet(mapId, out var mapController) ||
+            x < 0 || y < 0 ||
+            x >= mapController.Attributes.GetLength(0) || y >= mapController.Attributes.GetLength(1))
+        {
+            return false;
+        }
+
+        return mapController.Attributes[x, y] is MapBlockedAttribute or MapAnimationAttribute { IsBlock: true };
+    }
+
+    /// <summary>
+    /// True when attacking a diagonal neighbour would cut across the corner of a wall: neither melee hits nor
+    /// anything else may squeeze past a blocked tile, the attacker has to walk around it first.
+    /// </summary>
+    protected bool IsDiagonalCornerBlocked(int stepX, int stepY)
+    {
+        var horizontal = new TileHelper(MapId, X, Y);
+        if (horizontal.Translate(stepX, 0) && IsSolidForAttacks(horizontal.GetMapId(), horizontal.GetX(), horizontal.GetY()))
+        {
+            return true;
+        }
+
+        var vertical = new TileHelper(MapId, X, Y);
+        return vertical.Translate(0, stepY) && IsSolidForAttacks(vertical.GetMapId(), vertical.GetX(), vertical.GetY());
+    }
+
+    private static bool TryGetWorldTile(Guid mapId, int x, int y, out int worldX, out int worldY)
+    {
+        worldX = worldY = 0;
+        if (!MapController.TryGet(mapId, out var mapController))
+        {
+            return false;
+        }
+
+        worldX = x + (mapController.MapGridX * Options.Instance.Map.MapWidth);
+        worldY = y + (mapController.MapGridY * Options.Instance.Map.MapHeight);
+        return true;
+    }
+
+    /// <summary>
+    /// True when a solid wall lies on the straight line between two tiles (the tiles themselves are not tested), so
+    /// a spell cast from one to the other would have to pass through a collision.
+    /// </summary>
+    public static bool IsLineBlockedByWall(Guid fromMapId, int fromX, int fromY, Guid toMapId, int toX, int toY)
+    {
+        if (!TryGetWorldTile(fromMapId, fromX, fromY, out var startX, out var startY) ||
+            !TryGetWorldTile(toMapId, toX, toY, out var endX, out var endY))
+        {
+            return false;
+        }
+
+        var deltaX = Math.Abs(endX - startX);
+        var deltaY = Math.Abs(endY - startY);
+        var signX = Math.Sign(endX - startX);
+        var signY = Math.Sign(endY - startY);
+        if (deltaX <= 1 && deltaY <= 1)
+        {
+            return false;
+        }
+
+        var tile = new TileHelper(fromMapId, fromX, fromY);
+        var error = deltaX - deltaY;
+        int currentX = 0, currentY = 0;
+        var targetX = deltaX * signX;
+        var targetY = deltaY * signY;
+        for (var guard = 0; guard < 256 && !(currentX == targetX && currentY == targetY); guard++)
+        {
+            var doubled = 2 * error;
+            var stepX = 0;
+            var stepY = 0;
+            if (doubled > -deltaY)
+            {
+                error -= deltaY;
+                stepX = signX;
+                currentX += signX;
+            }
+
+            if (doubled < deltaX)
+            {
+                error += deltaX;
+                stepY = signY;
+                currentY += signY;
+            }
+
+            if (!tile.Translate(stepX, stepY))
+            {
+                return true;
+            }
+
+            if (currentX == targetX && currentY == targetY)
+            {
+                break;
+            }
+
+            if (IsSolidForAttacks(tile.GetMapId(), tile.GetX(), tile.GetY()))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     //Spawning/Dying

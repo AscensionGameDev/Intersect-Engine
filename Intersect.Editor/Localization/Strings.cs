@@ -4742,7 +4742,7 @@ Tick timer saved in server config.json.";
 
         public static LocalizedString exp = @"Exp:";
 
-        public static LocalizedString flee = @"Flee Health %";
+        public static LocalizedString flee = @"Flee Health % (0 = never flees)";
 
         public static LocalizedString focusdamagedealer = @"Focus Highest Damage Dealer:";
 
