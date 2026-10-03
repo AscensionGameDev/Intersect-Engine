@@ -53,13 +53,20 @@ public partial class CraftingWindow : Window
     private readonly List<Label> mIngredientNames = [];
     private Label? mBlockLabel;
     private Label? mEmptyLabel;
+    private Label? mDescriptionLabel;
+    private Label? mRequiresLabel;
 
     // Extra room compared to the layout JSON so long texts and recipe names stay inside the frame.
-    private const int ExtraWidth = 130;
-    private const int ExtraHeight = 60;
-    private const int ListExtraWidth = 80;
-    private const int RightPanelShift = ListExtraWidth;
-    private const int RightPanelExtraWidth = ExtraWidth - ListExtraWidth;
+    private const int ExtraWidth = 150;
+    private const int ExtraHeight = 80;
+    private const int ListWidth = 290;
+    private const int IconSize = 48;
+
+    // Right-hand detail panel (WoW-style): product, description, requirement, components, stats.
+    private int mRightX;
+    private int mRightW;
+
+    private static readonly Color GoldColor = new(255, 255, 209, 0);
 
     private Guid _automaticCraftingDescriptorId;
 
@@ -185,7 +192,7 @@ public partial class CraftingWindow : Window
         mCombinedValue = new Label(_craftedItem.Container, "CraftedItemQuantity");
 
         _craftedItem.Container.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
-        _craftedItem.Container.MoveBy(RightPanelShift, 0);
+        _craftedItem.Container.SetPosition(mRightX, 6);
 
         _craftedItem.LoadItem();
         mCombinedValue.Show();
@@ -286,10 +293,33 @@ public partial class CraftingWindow : Window
         }
 
         //Show crafting time and chances
-        mLblCraftingTime.Text = Strings.Crafting.CraftingTime.ToString(craftDescriptor.Time / 1000.0);
         mLblCraftingChance.Text = Strings.Crafting.CraftChance.ToString(craftDescriptor.FailureChance);
         mLblDestroyMaterialsChance.Text =
             Strings.Crafting.DestroyMaterialsChance.ToString(craftDescriptor.ItemLossChance);
+        mLblCraftingTime.Text =
+            $"Temps : {craftDescriptor.Time / 1000.0:0.#}s    Échec : {craftDescriptor.FailureChance}%    Perte des composants : {craftDescriptor.ItemLossChance}%";
+
+        // Product name (rarity colour), description and requirement, WoW-style.
+        var productName = craftedItemDescriptor?.Name ?? craftDescriptor.Name;
+        mLblProduct.Text = productName;
+        mLblProduct.TextColor = craftedItemDescriptor != null &&
+                                CustomColors.Items.Rarities.TryGetValue(craftedItemDescriptor.Rarity, out var rarityColor)
+            ? rarityColor
+            : new Color(255, 120, 230, 120);
+        if (mDescriptionLabel != null)
+        {
+            mDescriptionLabel.Text = craftedItemDescriptor?.Description ?? string.Empty;
+        }
+
+        if (mRequiresLabel != null)
+        {
+            mRequiresLabel.Text = craftDescriptor.Profession != 0
+                ? $"Requiert : {Professions.GetName((Profession)craftDescriptor.Profession)} niveau {craftDescriptor.SkillOrange}"
+                : string.Empty;
+            mRequiresLabel.TextColor = GetBlockReason(craftDescriptor) != null
+                ? new Color(255, 230, 90, 90)
+                : new Color(255, 230, 230, 230);
+        }
 
         //If crafting & we no longer have the items for the craft then stop!
         if (IsCrafting)
@@ -611,24 +641,53 @@ public partial class CraftingWindow : Window
         SetSize(Width + ExtraWidth, Height + ExtraHeight);
         Align.Center(this);
 
-        mRecipes.SetSize(mRecipes.Width + ListExtraWidth, mRecipes.Height + ExtraHeight);
+        mRecipes.SetBounds(mRecipes.X, mRecipes.Y, ListWidth, mRecipes.Height + ExtraHeight);
 
-        foreach (var control in new Base[] { mLblProduct, mLblCraftingChance, mLblDestroyMaterialsChance, mLblCraftingTime, mLblIngredients })
-        {
-            control.SetBounds(control.X + RightPanelShift, control.Y, control.Width + RightPanelExtraWidth, control.Height);
-        }
+        mRightX = mRecipes.X + ListWidth + 16;
+        mRightW = Width - mRightX - 44;
 
-        mItemContainer.SetBounds(
-            mItemContainer.X + RightPanelShift,
-            mItemContainer.Y,
-            mItemContainer.Width + RightPanelExtraWidth,
-            mItemContainer.Height + ExtraHeight - 30
+        // Bottom row: progress bar on the left, buttons on the right.
+        var buttonY = mCraft.Y + ExtraHeight;
+        mCraft.SetBounds(mRightX + mRightW - mCraft.Width, buttonY, mCraft.Width, mCraft.Height);
+        mCraftAll.SetBounds(mCraft.X - mCraftAll.Width - 8, buttonY, mCraftAll.Width, mCraftAll.Height);
+        mBarContainer.SetBounds(
+            mRightX,
+            buttonY + Math.Max(0, (mCraft.Height - mBarContainer.Height) / 2),
+            Math.Max(40, Math.Min(mBarContainer.Width, mCraftAll.X - mRightX - 12)),
+            mBarContainer.Height
         );
 
-        foreach (var control in new Base[] { mCraft, mCraftAll, mBarContainer })
+        // Product name next to the icon created in LoadCraftRecipe.
+        mLblProduct.SetBounds(mRightX + IconSize + 12, 10, mRightW - IconSize - 12, 24);
+
+        mDescriptionLabel = new Label(this, "DescriptionLabel")
         {
-            control.SetBounds(control.X + RightPanelShift + RightPanelExtraWidth, control.Y + ExtraHeight, control.Width, control.Height);
-        }
+            Font = mLblProduct.Font,
+            TextColor = new Color(255, 235, 235, 235),
+            WrappingBehavior = WrappingBehavior.Wrapped,
+            Text = string.Empty,
+        };
+        mDescriptionLabel.SetBounds(mRightX, 66, mRightW, 56);
+
+        mRequiresLabel = new Label(this, "RequiresLabel")
+        {
+            Font = mLblProduct.Font,
+            Text = string.Empty,
+        };
+        mRequiresLabel.SetBounds(mRightX, 128, mRightW, 22);
+
+        mLblIngredients.Text = "Composants :";
+        mLblIngredients.TextColor = GoldColor;
+        mLblIngredients.SetBounds(mRightX, 156, mRightW, 22);
+
+        var statsY = buttonY - 52;
+        var blockY = buttonY - 28;
+        mItemContainer.SetBounds(mRightX, 182, mRightW, Math.Max(60, statsY - 182 - 6));
+
+        // The three stats are shown on one line (mLblCraftingTime); the separate labels are redundant.
+        mLblCraftingChance.Hide();
+        mLblDestroyMaterialsChance.Hide();
+        mLblCraftingTime.SetBounds(mRightX, statsY, mRightW, 22);
 
         mBlockLabel = new Label(this, "BlockReasonLabel")
         {
@@ -636,12 +695,7 @@ public partial class CraftingWindow : Window
             TextColor = new Color(255, 230, 150, 60),
             Text = string.Empty,
         };
-        mBlockLabel.SetBounds(
-            mItemContainer.X,
-            mItemContainer.Y + mItemContainer.Height + 4,
-            mItemContainer.Width,
-            22
-        );
+        mBlockLabel.SetBounds(mRightX, blockY, mRightW, 22);
     }
 
     private void ShowEmptyMessage()
