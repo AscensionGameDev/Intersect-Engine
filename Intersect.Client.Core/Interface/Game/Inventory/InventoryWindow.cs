@@ -53,7 +53,7 @@ public partial class InventoryWindow : Window
 
         // WoW-style: more columns, list pulled inside the frame, search box on top.
         SetSize(Width + ExtraWidth, Height + ExtraHeight);
-        _slotContainer.Margin = new Margin(14, 38, 8, 12);
+        _slotContainer.Margin = new Margin(28, 38, 8, 14);
 
         _searchBox = new TextBox(this, "InventorySearchBox")
         {
@@ -62,7 +62,7 @@ public partial class InventoryWindow : Window
             FontName = "sourcesansproblack",
             FontSize = 11,
         };
-        _searchBox.SetBounds(14, 8, Width - 52, 24);
+        _searchBox.SetBounds(28, 8, Width - 68, 24);
         _searchBox.TextChanged += (_, _) => _searchText = (_searchBox.Text ?? string.Empty).Trim();
         Interface.FocusComponents.Add(_searchBox);
         _searchBox.SubmitPressed += (_, _) => _searchBox.Blur();
@@ -118,7 +118,7 @@ public partial class InventoryWindow : Window
             Items.Add(new InventoryItem(this, _slotContainer, slotIndex, _contextMenu));
         }
 
-        PopulateSlotContainer.Populate(_slotContainer, Items, Width - 70);
+        PopulateSlotContainer.Populate(_slotContainer, Items, Width - 82);
     }
 
     public override void Hide()

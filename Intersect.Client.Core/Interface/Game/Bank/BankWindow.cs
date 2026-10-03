@@ -73,7 +73,7 @@ public partial class BankWindow : Window
         {
             // WoW-style: wider window (more columns), list pulled inside the frame, search box on top.
             SetSize(Width + ExtraWidth, Height + ExtraHeight);
-            _slotContainer.Margin = new Margin(16, 38, 8, 12);
+            _slotContainer.Margin = new Margin(30, 38, 8, 14);
 
             _searchBox = new TextBox(this, "BankSearchBox")
             {
@@ -82,7 +82,7 @@ public partial class BankWindow : Window
                 FontName = "sourcesansproblack",
                 FontSize = 11,
             };
-            _searchBox.SetBounds(16, 8, Width - 56, 24);
+            _searchBox.SetBounds(30, 8, Width - 74, 24);
             _searchBox.TextChanged += (_, _) => _searchText = (_searchBox.Text ?? string.Empty).Trim();
             Interface.FocusComponents.Add(_searchBox);
             _searchBox.SubmitPressed += (_, _) => _searchBox.Blur();
@@ -102,7 +102,7 @@ public partial class BankWindow : Window
             Items.Add(new BankItem(this, _slotContainer, slotIndex, _contextMenu));
         }
 
-        PopulateSlotContainer.Populate(_slotContainer, Items, Width - 70);
+        PopulateSlotContainer.Populate(_slotContainer, Items, Width - 84);
     }
 
     public void Update()
