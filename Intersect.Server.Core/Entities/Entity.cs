@@ -2635,7 +2635,7 @@ public abstract partial class Entity : IEntity
             }
 
             // A spell cannot pass through a wall: the target has to be reachable in a straight line.
-            if (IsLineBlockedByWall(MapId, X, Y, target.MapId, target.X, target.Y))
+            if (IsLineBlockedByWall(MapInstanceId, MapId, X, Y, target.MapId, target.X, target.Y))
             {
                 (this as Player)?.NotifySpellBlockedByWall();
                 reason = SpellCastFailureReason.InvalidTarget;
@@ -3111,7 +3111,7 @@ public abstract partial class Entity : IEntity
                         if (spellTarget == null || spellTarget == entity)
                         {
                             if (entity.GetDistanceTo(startMap, startX, startY) <= range &&
-                                !IsLineBlockedByWall(startMapId, startX, startY, entity.MapId, entity.X, entity.Y))
+                                !IsLineBlockedByWall(MapInstanceId, startMapId, startX, startY, entity.MapId, entity.X, entity.Y))
                             {
                                 //Check to handle a warp to spell
                                 if (spellBase.SpellType == SpellType.WarpTo)
@@ -3491,7 +3491,7 @@ public abstract partial class Entity : IEntity
     /// A tile that stops attacks and spells: a blocked map tile or a blocking animation tile. (Entities and
     /// resources do not count - this is about solid walls, not about creatures standing in the way.)
     /// </summary>
-    private static bool IsSolidForAttacks(Guid mapId, int x, int y)
+    private static bool IsSolidForAttacks(Guid mapId, Guid mapInstanceId, int x, int y)
     {
         if (!MapController.TryGet(mapId, out var mapController) ||
             x < 0 || y < 0 ||
@@ -3500,7 +3500,17 @@ public abstract partial class Entity : IEntity
             return false;
         }
 
-        return mapController.Attributes[x, y] is MapBlockedAttribute or MapAnimationAttribute { IsBlock: true };
+        var attribute = mapController.Attributes[x, y];
+        if (attribute is MapBlockedAttribute or MapAnimationAttribute { IsBlock: true })
+        {
+            return true;
+        }
+
+        // Also the tileset passability set in the editor (per-tile blocked quarters), and non-passable furniture:
+        // the same cached blocks that stop walking. A map can still override a tile back to walkable.
+        return attribute?.Type != MapAttributeType.Walkable &&
+               mapController.TryGetInstance(mapInstanceId, out var instance) &&
+               instance.IsPositionBlocked(true, x, y);
     }
 
     /// <summary>
@@ -3510,13 +3520,13 @@ public abstract partial class Entity : IEntity
     protected bool IsDiagonalCornerBlocked(int stepX, int stepY)
     {
         var horizontal = new TileHelper(MapId, X, Y);
-        if (horizontal.Translate(stepX, 0) && IsSolidForAttacks(horizontal.GetMapId(), horizontal.GetX(), horizontal.GetY()))
+        if (horizontal.Translate(stepX, 0) && IsSolidForAttacks(horizontal.GetMapId(), MapInstanceId, horizontal.GetX(), horizontal.GetY()))
         {
             return true;
         }
 
         var vertical = new TileHelper(MapId, X, Y);
-        return vertical.Translate(0, stepY) && IsSolidForAttacks(vertical.GetMapId(), vertical.GetX(), vertical.GetY());
+        return vertical.Translate(0, stepY) && IsSolidForAttacks(vertical.GetMapId(), MapInstanceId, vertical.GetX(), vertical.GetY());
     }
 
     private static bool TryGetWorldTile(Guid mapId, int x, int y, out int worldX, out int worldY)
@@ -3536,7 +3546,7 @@ public abstract partial class Entity : IEntity
     /// True when a solid wall lies on the straight line between two tiles (the tiles themselves are not tested), so
     /// a spell cast from one to the other would have to pass through a collision.
     /// </summary>
-    public static bool IsLineBlockedByWall(Guid fromMapId, int fromX, int fromY, Guid toMapId, int toX, int toY)
+    public static bool IsLineBlockedByWall(Guid mapInstanceId, Guid fromMapId, int fromX, int fromY, Guid toMapId, int toX, int toY)
     {
         if (!TryGetWorldTile(fromMapId, fromX, fromY, out var startX, out var startY) ||
             !TryGetWorldTile(toMapId, toX, toY, out var endX, out var endY))
@@ -3587,7 +3597,7 @@ public abstract partial class Entity : IEntity
                 break;
             }
 
-            if (IsSolidForAttacks(tile.GetMapId(), tile.GetX(), tile.GetY()))
+            if (IsSolidForAttacks(tile.GetMapId(), mapInstanceId, tile.GetX(), tile.GetY()))
             {
                 return true;
             }

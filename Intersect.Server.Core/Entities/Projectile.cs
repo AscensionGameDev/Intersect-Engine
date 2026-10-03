@@ -391,6 +391,18 @@ public partial class Projectile : Entity
             }
         }
 
+        // Walls painted by the tileset passability editor (and non-passable furniture) stop projectiles too, not only
+        // map "Blocked" attributes. A map can still override a tile back to Walkable. The shooter's own tile and the
+        // tile right in front of a point-blank shot are left alone so a spell is never swallowed at the caster.
+        if (!killSpawn && !spawn.ProjectileDescriptor.IgnoreMapBlocks &&
+            attribute?.Type != MapAttributeType.Walkable &&
+            (spawn.X != Owner.X || spawn.Y != Owner.Y || spawn.MapId != Owner.MapId) &&
+            MapController.TryGetInstanceFromMap(map.Id, MapInstanceId, out var wallInstance) &&
+            wallInstance.IsPositionBlocked(true, (int)roundedX, (int)roundedY, spawn.Z))
+        {
+            killSpawn = true;
+        }
+
         if (!killSpawn && MapController.TryGetInstanceFromMap(map.Id, MapInstanceId, out var mapInstance))
         {
             var entities = mapInstance.GetEntities();
