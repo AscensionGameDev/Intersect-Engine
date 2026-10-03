@@ -481,6 +481,21 @@ public partial class InventoryItem : SlotItem
         Icon.Texture = default;
     }
 
+    /// <summary>Dims the slot when its item does not match the search text (empty text matches everything).</summary>
+    public void ApplySearch(string search)
+    {
+        if (string.IsNullOrEmpty(search) || Globals.Me?.Inventory[SlotIndex] is not { } inventorySlot ||
+            !ItemDescriptor.TryGet(inventorySlot.ItemId, out var descriptor))
+        {
+            return;
+        }
+
+        if (!descriptor.Name.Contains(search, StringComparison.CurrentCultureIgnoreCase))
+        {
+            Icon.RenderColor.A = 60;
+        }
+    }
+
     public override void Update()
     {
         if (Globals.Me == default)

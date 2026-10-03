@@ -13,6 +13,11 @@ public partial class InventoryWindow : Window
     public List<SlotItem> Items { get; set; } = [];
     private readonly ScrollControl _slotContainer;
     private readonly ContextMenu _contextMenu;
+    private TextBox? _searchBox;
+    private string _searchText = string.Empty;
+
+    private const int ExtraWidth = 120;
+    private const int ExtraHeight = 90;
 
     public InventoryWindow(Canvas gameCanvas) : base(gameCanvas, Strings.Inventory.Title, false, nameof(InventoryWindow))
     {
@@ -44,6 +49,18 @@ public partial class InventoryWindow : Window
     protected override void EnsureInitialized()
     {
         LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+
+        // WoW-style: more columns, list pulled inside the frame, search box on top.
+        SetSize(Width + ExtraWidth, Height + ExtraHeight);
+        _slotContainer.Margin = new Margin(14, 38, 8, 12);
+
+        _searchBox = new TextBox(this, "InventorySearchBox")
+        {
+            PlaceholderText = "Rechercher…",
+        };
+        _searchBox.SetBounds(14, 8, Width - 52, 24);
+        _searchBox.TextChanged += (_, _) => _searchText = (_searchBox.Text ?? string.Empty).Trim();
+
         InitItemContainer();
     }
 
@@ -75,6 +92,10 @@ public partial class InventoryWindow : Window
         for (var slotIndex = 0; slotIndex < slotCount; slotIndex++)
         {
             Items[slotIndex].Update();
+            if (Items[slotIndex] is InventoryItem inventoryItem)
+            {
+                inventoryItem.ApplySearch(_searchText);
+            }
         }
     }
 
