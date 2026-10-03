@@ -191,47 +191,120 @@ public partial class Event : Entity
         return "E";
     }
 
+    private sealed record SilhouetteOutline((int X, int Y)[] EdgePixels, int MinX, int MinY, int MaxX, int MaxY);
+
+    private static readonly Dictionary<(IGameTexture Texture, int X, int Y, int Width, int Height), SilhouetteOutline?>
+        OutlineCache = [];
+
+    private static SilhouetteOutline? GetSilhouetteOutline(IGameTexture texture, FloatRect source)
+    {
+        var key = (texture, (int)source.X, (int)source.Y, (int)source.Width, (int)source.Height);
+        if (OutlineCache.TryGetValue(key, out var cached))
+        {
+            return cached;
+        }
+
+        SilhouetteOutline? outline = null;
+        try
+        {
+            var width = key.Item4;
+            var height = key.Item5;
+            if (width > 0 && height > 0)
+            {
+                var pixels = texture.GetPixels(key.Item2, key.Item3, width, height);
+                bool Opaque(int px, int py) =>
+                    px >= 0 && py >= 0 && px < width && py < height && pixels[(py * width) + px].A >= 60;
+
+                int minX = int.MaxValue, minY = int.MaxValue, maxX = int.MinValue, maxY = int.MinValue;
+                var edges = new List<(int X, int Y)>();
+                for (var py = -1; py <= height; py++)
+                {
+                    for (var px = -1; px <= width; px++)
+                    {
+                        if (Opaque(px, py))
+                        {
+                            minX = Math.Min(minX, px);
+                            minY = Math.Min(minY, py);
+                            maxX = Math.Max(maxX, px);
+                            maxY = Math.Max(maxY, py);
+                        }
+                        else if (Opaque(px - 1, py) || Opaque(px + 1, py) || Opaque(px, py - 1) || Opaque(px, py + 1))
+                        {
+                            edges.Add((px, py));
+                        }
+                    }
+                }
+
+                if (maxX >= minX)
+                {
+                    outline = new SilhouetteOutline(edges.ToArray(), minX, minY, maxX, maxY);
+                }
+            }
+        }
+        catch (Exception exception)
+        {
+            ApplicationContext.Context.Value?.Logger.LogWarning(exception, "Could not build the interaction outline");
+        }
+
+        OutlineCache[key] = outline;
+        return outline;
+    }
+
     /// <summary>
-    /// When the mouse is over an event that reacts to the action button (NPCs, objects), outline it and show a
-    /// small "Press E" bubble above it, so the player knows they can interact.
+    /// When the mouse is over an event that reacts to the action button (NPCs, objects), trace its silhouette and show
+    /// a small "Press E" bubble above it, so the player knows they can interact.
     /// </summary>
     private void DrawInteractionHint()
     {
         if (Trigger != EventTrigger.ActionButton || IsHidden || Graphic.Type == EventGraphicType.None ||
             Graphics.Renderer == default || WorldPos.Width <= 0 || WorldPos.Height <= 0 ||
-            Globals.Me == default || Interface.Interface.DoesMouseHitInterface())
+            Globals.Me == default || LastDrawnTexture is not { } texture || LastDrawnSource.Width <= 0 ||
+            Interface.Interface.DoesMouseHitInterface())
         {
             return;
         }
 
+        if (GetSilhouetteOutline(texture, LastDrawnSource) is not { } outline)
+        {
+            return;
+        }
+
+        var scaleX = WorldPos.Width / LastDrawnSource.Width;
+        var scaleY = WorldPos.Height / LastDrawnSource.Height;
+
+        // Hovered only when the cursor is over the visible part of the sprite, not its transparent frame.
         var mouse = Graphics.ConvertToWorldPoint(Globals.InputManager.GetMousePosition());
-        if (mouse.X < WorldPos.X || mouse.X > WorldPos.X + WorldPos.Width ||
-            mouse.Y < WorldPos.Y || mouse.Y > WorldPos.Y + WorldPos.Height)
+        var localX = (mouse.X - WorldPos.X) / scaleX;
+        var localY = (mouse.Y - WorldPos.Y) / scaleY;
+        if (localX < outline.MinX || localX > outline.MaxX + 1 || localY < outline.MinY || localY > outline.MaxY + 1)
         {
             return;
         }
 
-        // Outline around the sprite.
         var white = Graphics.Renderer.WhitePixel;
         var src = new FloatRect(0, 0, 1, 1);
-        var rect = WorldPos;
-        const float thickness = 1.5f;
-        Graphics.DrawGameTexture(white, src, new FloatRect(rect.X - thickness, rect.Y - thickness, rect.Width + thickness * 2, thickness), HintGold);
-        Graphics.DrawGameTexture(white, src, new FloatRect(rect.X - thickness, rect.Y + rect.Height, rect.Width + thickness * 2, thickness), HintGold);
-        Graphics.DrawGameTexture(white, src, new FloatRect(rect.X - thickness, rect.Y, thickness, rect.Height), HintGold);
-        Graphics.DrawGameTexture(white, src, new FloatRect(rect.X + rect.Width, rect.Y, thickness, rect.Height), HintGold);
 
-        // Bubble above the sprite.
+        // Silhouette outline: every transparent pixel touching the sprite.
+        foreach (var (edgeX, edgeY) in outline.EdgePixels)
+        {
+            Graphics.DrawGameTexture(
+                white,
+                src,
+                new FloatRect(WorldPos.X + (edgeX * scaleX), WorldPos.Y + (edgeY * scaleY), scaleX, scaleY),
+                HintGold
+            );
+        }
+
+        // Bubble above the sprite's real top (clear of the name drawn just over the head).
         var text = $"Press \"{GetInteractKeyLabel()}\"";
         var textSize = Graphics.Renderer.MeasureText(text, Graphics.EntityNameFont, Graphics.EntityNameFontSize, 1);
         var bubbleWidth = textSize.X + 14;
         var bubbleHeight = textSize.Y + 8;
-        var bubbleX = rect.X + (rect.Width / 2f) - (bubbleWidth / 2f);
-        var bubbleY = rect.Y - bubbleHeight - 10;
+        var bubbleX = WorldPos.X + ((outline.MinX + outline.MaxX + 1) / 2f * scaleX) - (bubbleWidth / 2f);
+        var bubbleY = WorldPos.Y + (outline.MinY * scaleY) - bubbleHeight - 28;
 
         Graphics.DrawGameTexture(white, src, new FloatRect(bubbleX - 1, bubbleY - 1, bubbleWidth + 2, bubbleHeight + 2), HintGold);
         Graphics.DrawGameTexture(white, src, new FloatRect(bubbleX, bubbleY, bubbleWidth, bubbleHeight), new Color(235, 20, 20, 28));
-        // Little tail pointing down at the sprite.
         Graphics.DrawGameTexture(white, src, new FloatRect(bubbleX + (bubbleWidth / 2f) - 3, bubbleY + bubbleHeight, 6, 3), new Color(235, 20, 20, 28));
         Graphics.Renderer.DrawString(
             text,
@@ -271,6 +344,8 @@ public partial class Event : Entity
                     width,
                     height
                 );
+                LastDrawnTexture = texture;
+                LastDrawnSource = srcRectangle;
                 break;
 
             default:

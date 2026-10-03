@@ -997,6 +997,11 @@ public partial class Entity : IEntity
     /// </summary>
     public virtual bool ShouldDraw => !IsHidden && (!IsStealthed || this == Globals.Me || Globals.Me?.IsInMyParty(Id) == true);
 
+    /// <summary>Texture and source rectangle used for this entity's sprite the last time it was drawn.</summary>
+    protected IGameTexture? LastDrawnTexture { get; set; }
+
+    protected FloatRect LastDrawnSource { get; set; }
+
     /// <summary>How close (in tiles) the player must be for an event's name to be displayed.</summary>
     private const float EventNameProximityTiles = 4f;
 
@@ -1299,6 +1304,11 @@ public partial class Entity : IEntity
         }
 
         var srcRectangle = new FloatRect(frame * frameWidth, spriteRow * frameHeight, frameWidth, frameHeight);
+
+        // Remembered so overlays (e.g. the interaction outline of an NPC) can follow the exact sprite frame.
+        LastDrawnTexture = texture;
+        LastDrawnSource = srcRectangle;
+
         var destRectangle = new FloatRect(
             (int)Math.Ceiling(Origin.X - frameWidth / 2f),
             (int)Math.Ceiling(Origin.Y - frameHeight),

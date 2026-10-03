@@ -346,6 +346,21 @@ public abstract partial class GameTexture<TPlatformTexture, TPlatformRenderer> :
 
     public abstract Color GetPixel(int x, int y);
 
+    /// <summary>Reads a rectangle of pixels (row by row). Platform textures may override this with a single bulk read.</summary>
+    public virtual Color[] GetPixels(int x, int y, int width, int height)
+    {
+        var pixels = new Color[width * height];
+        for (var row = 0; row < height; row++)
+        {
+            for (var column = 0; column < width; column++)
+            {
+                pixels[(row * width) + column] = GetPixel(x + column, y + row);
+            }
+        }
+
+        return pixels;
+    }
+
     public override string ToString()
     {
         return $"{GetType().Name} ({Name})";

@@ -166,6 +166,34 @@ internal partial class MonoRenderer
             return platformTexture;
         }
 
+        public override Color[] GetPixels(int x, int y, int width, int height)
+        {
+            if (PlatformTexture is not { } platformTexture || AtlasReference?.IsRotated == true || width <= 0 || height <= 0)
+            {
+                return base.GetPixels(x, y, width, height);
+            }
+
+            var originX = x + (AtlasReference?.Bounds.X ?? 0);
+            var originY = y + (AtlasReference?.Bounds.Y ?? 0);
+            var buffer = new Microsoft.Xna.Framework.Color[width * height];
+            platformTexture.GetData(
+                level: 0,
+                rect: new Rectangle(originX, originY, width, height),
+                data: buffer,
+                startIndex: 0,
+                elementCount: buffer.Length
+            );
+
+            var pixels = new Color[buffer.Length];
+            for (var index = 0; index < buffer.Length; index++)
+            {
+                var pixel = buffer[index];
+                pixels[index] = new Color(pixel.A, pixel.R, pixel.G, pixel.B);
+            }
+
+            return pixels;
+        }
+
         public override Color GetPixel(int x, int y)
         {
             if (PlatformTexture is not { } platformTexture)
