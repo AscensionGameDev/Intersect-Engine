@@ -46,6 +46,10 @@ public partial class ShopWindow : Window
     protected override void EnsureInitialized()
     {
         LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+
+        // The layout docks the list flush against the frame, so slots stick out of the window.
+        _slotContainer.Margin = new Margin(16, 8, 8, 12);
+
         InitItemContainer();
     }
 
