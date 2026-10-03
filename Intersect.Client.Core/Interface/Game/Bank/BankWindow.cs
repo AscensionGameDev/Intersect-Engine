@@ -13,6 +13,11 @@ public partial class BankWindow : Window
     public List<SlotItem> Items = [];
     private readonly ScrollControl _slotContainer;
     private readonly ContextMenu _contextMenu;
+    private TextBox? _searchBox;
+    private string _searchText = string.Empty;
+
+    private const int ExtraWidth = 260;
+    private const int ExtraHeight = 90;
 
     //Init
     public BankWindow(Canvas gameCanvas) : base(
@@ -60,6 +65,19 @@ public partial class BankWindow : Window
     protected override void EnsureInitialized()
     {
         LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+
+        // WoW-style: wider window (more columns), list pulled inside the frame, search box on top.
+        SetSize(Width + ExtraWidth, Height + ExtraHeight);
+        Align.Center(this);
+        _slotContainer.Margin = new Margin(16, 38, 8, 12);
+
+        _searchBox = new TextBox(this, "BankSearchBox")
+        {
+            PlaceholderText = "Rechercher…",
+        };
+        _searchBox.SetBounds(16, 8, Width - 56, 24);
+        _searchBox.TextChanged += (_, _) => _searchText = (_searchBox.Text ?? string.Empty).Trim();
+
         InitItemContainer();
     }
 
@@ -85,6 +103,7 @@ public partial class BankWindow : Window
             if (Items[i] is BankItem bankItem)
             {
                 bankItem.Update();
+                bankItem.ApplySearch(_searchText);
             }
         }
     }
