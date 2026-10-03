@@ -67,6 +67,82 @@ public partial class MapInstance : MapDescriptor, IGameObject<Guid, MapInstance>
 
     private long _weatherParticleSpawnTime;
 
+    /// <summary>A short spark burst shown on a monster (or resource) at the moment it is hit.</summary>
+    public sealed class HitImpact(int x, int y, Color color, bool critical)
+    {
+        public int X { get; } = x;
+
+        public int Y { get; } = y;
+
+        public Color Color { get; } = color;
+
+        public bool Critical { get; } = critical;
+
+        public long StartTime { get; } = Timing.Global.Milliseconds;
+    }
+
+    public List<HitImpact> HitImpacts { get; } = [];
+
+    private void DrawHitImpacts()
+    {
+        if (HitImpacts.Count == 0 || Graphics.Renderer == default)
+        {
+            return;
+        }
+
+        var white = Graphics.Renderer.WhitePixel;
+        var src = new FloatRect(0, 0, 1, 1);
+        var now = Timing.Global.Milliseconds;
+
+        for (var index = HitImpacts.Count - 1; index >= 0; index--)
+        {
+            var impact = HitImpacts[index];
+            var duration = impact.Critical ? 360f : 260f;
+            var progress = (now - impact.StartTime) / duration;
+            if (progress >= 1f)
+            {
+                HitImpacts.RemoveAt(index);
+                continue;
+            }
+
+            var centerX = X + (impact.X * _tileWidth) + (_tileWidth / 2f);
+            var centerY = Y + (impact.Y * _tileHeight) + (_tileHeight * 0.4f);
+            var fade = 1f - progress;
+            var rays = impact.Critical ? 12 : 8;
+            var maxRadius = _tileWidth * (impact.Critical ? 0.85f : 0.6f);
+
+            // Quick bright flash at the centre of the hit.
+            if (progress < 0.35f)
+            {
+                var flash = (_tileWidth * 0.45f) * (1f - (progress / 0.35f));
+                Graphics.DrawGameTexture(
+                    white,
+                    src,
+                    new FloatRect(centerX - (flash / 2f), centerY - (flash / 2f), flash, flash),
+                    new Color((int)(230 * (1f - (progress / 0.35f))), 255, 255, 255),
+                    rotationDegrees: 45f
+                );
+            }
+
+            // Sparks flying outwards.
+            for (var ray = 0; ray < rays; ray++)
+            {
+                var angle = (ray / (float)rays) * MathF.Tau + (impact.StartTime % 7) * 0.15f;
+                var distance = maxRadius * MathF.Sqrt(progress);
+                var length = _tileWidth * 0.22f * fade;
+                var x = centerX + (MathF.Cos(angle) * distance);
+                var y = centerY + (MathF.Sin(angle) * distance);
+                Graphics.DrawGameTexture(
+                    white,
+                    src,
+                    new FloatRect(x - (length / 2f), y - 1.2f, length, 2.4f),
+                    new Color((int)(255 * fade), impact.Color.R, impact.Color.G, impact.Color.B),
+                    rotationDegrees: angle * 180f / MathF.PI
+                );
+            }
+        }
+    }
+
     //Action Msg's
     public List<IActionMessage> ActionMessages { get; set; } = new List<IActionMessage>();
 
@@ -1779,6 +1855,8 @@ public partial class MapInstance : MapDescriptor, IGameObject<Guid, MapInstance>
 
     public void DrawActionMsgs()
     {
+        DrawHitImpacts();
+
         for (var n = ActionMessages.Count - 1; n > -1; n--)
         {
             var actionMessage = ActionMessages[n];

@@ -676,6 +676,50 @@ internal sealed partial class PacketHandler
         }
     }
 
+    private static bool SameColor(Intersect.Color a, Intersect.Color b) => a.A == b.A && a.R == b.R && a.G == b.G && a.B == b.B;
+
+    /// <summary>
+    /// Damage numbers are floating messages coloured by damage type. When one lands on a monster or resource (not a
+    /// player), show a spark burst on it so the hit is felt where it lands.
+    /// </summary>
+    private static void AddHitImpactIfDamageOnMonster(MapInstance map, ActionMsgPacket packet)
+    {
+        if (!int.TryParse(packet.Message.TrimStart('-', '+'), out _))
+        {
+            return;
+        }
+
+        var messageColor = new Intersect.Color(packet.Color.A, packet.Color.R, packet.Color.G, packet.Color.B);
+        var combat = CustomColors.Combat;
+        var critical = SameColor(messageColor, combat.Critical);
+        if (!critical &&
+            !SameColor(messageColor, combat.PhysicalDamage) &&
+            !SameColor(messageColor, combat.MagicDamage) &&
+            !SameColor(messageColor, combat.TrueDamage))
+        {
+            return;
+        }
+
+        var onMonster = Globals.Entities.Values.Any(
+            entity => entity.MapId == map.Id &&
+                      entity.X == packet.X &&
+                      entity.Y == packet.Y &&
+                      entity is not Entities.Player &&
+                      entity.Type is EntityType.GlobalEntity or EntityType.Resource
+        );
+        if (!onMonster)
+        {
+            return;
+        }
+
+        var impactColor = critical
+            ? new Intersect.Color(255, 255, 220, 60)
+            : SameColor(messageColor, combat.MagicDamage)
+                ? new Intersect.Color(255, 230, 120, 255)
+                : new Intersect.Color(255, 255, 190, 90);
+        map.HitImpacts.Add(new MapInstance.HitImpact(packet.X, packet.Y, impactColor, critical));
+    }
+
     //ActionMsgPacket
     public void HandlePacket(IPacketSender packetSender, ActionMsgPacket packet)
     {
@@ -688,6 +732,8 @@ internal sealed partial class PacketHandler
                     new Color(packet.Color.A, packet.Color.R, packet.Color.G, packet.Color.B)
                 )
             );
+
+            AddHitImpactIfDamageOnMonster(map, packet);
 
             // A critical hit (recognised by its message colour) gives the camera a short kick.
             var critical = CustomColors.Combat.Critical;
