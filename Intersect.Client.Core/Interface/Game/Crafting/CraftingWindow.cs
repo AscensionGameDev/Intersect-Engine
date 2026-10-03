@@ -50,6 +50,17 @@ public partial class CraftingWindow : Window
     private readonly ListBox mRecipes;
 
     private readonly List<Label> mValues = [];
+    private readonly List<Label> mIngredientNames = [];
+    private Label? mBlockLabel;
+    private Label? mEmptyLabel;
+
+    // Extra room compared to the layout JSON so long texts and recipe names stay inside the frame.
+    private const int ExtraWidth = 130;
+    private const int ExtraHeight = 60;
+    private const int ListExtraWidth = 80;
+    private const int RightPanelShift = ListExtraWidth;
+    private const int RightPanelExtraWidth = ExtraWidth - ListExtraWidth;
+
     private Guid _automaticCraftingDescriptorId;
 
     private RecipeItem? _craftedItem;
@@ -174,6 +185,7 @@ public partial class CraftingWindow : Window
         mCombinedValue = new Label(_craftedItem.Container, "CraftedItemQuantity");
 
         _craftedItem.Container.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+        _craftedItem.Container.MoveBy(RightPanelShift, 0);
 
         _craftedItem.LoadItem();
         mCombinedValue.Show();
@@ -198,6 +210,12 @@ public partial class CraftingWindow : Window
 
         mItems.Clear();
         mValues.Clear();
+        foreach (var nameLabel in mIngredientNames)
+        {
+            mItemContainer.RemoveChild(nameLabel, true);
+        }
+
+        mIngredientNames.Clear();
 
         if (Globals.Me is not { } player)
         {
@@ -245,18 +263,26 @@ public partial class CraftingWindow : Window
             var xPadding = recipeItemContainer.Margin.Left + recipeItemContainer.Margin.Right;
             var yPadding = recipeItemContainer.Margin.Top + recipeItemContainer.Margin.Bottom;
 
-            var availableWidth = mItemContainer.Width - mItemContainer.VerticalScrollBar.Width;
-            var widthPerRecipeItemIcon = recipeItemContainer.Width + xPadding;
-            var itemsPerRow = Math.Max(1, availableWidth / Math.Max(1, widthPerRecipeItemIcon));
-
-            var column = ingredientIndex % itemsPerRow;
-            var row = ingredientIndex / itemsPerRow;
-
-            Point iconPosition = new(
-                (column * widthPerRecipeItemIcon) + xPadding,
-                (row * (recipeItemContainer.Height + yPadding)) + yPadding
-            );
+            // One ingredient per row: icon, then its name coloured by whether the player has enough of it.
+            Point iconPosition = new(xPadding, (ingredientIndex * (recipeItemContainer.Height + yPadding)) + yPadding);
             recipeItemContainer.SetPosition(iconPosition);
+
+            var hasEnough = onHand >= craftingIngredient.Quantity;
+            var nameLabel = new Label(mItemContainer, "IngredientName")
+            {
+                Font = mLblProduct.Font,
+                Text = ItemDescriptor.TryGet(craftingIngredient.ItemId, out var ingredientDescriptor)
+                    ? $"{ingredientDescriptor.Name} x{craftingIngredient.Quantity}"
+                    : "?",
+                TextColor = hasEnough ? new Color(255, 120, 220, 120) : new Color(255, 230, 90, 90),
+            };
+            nameLabel.SetBounds(
+                iconPosition.X + recipeItemContainer.Width + 10,
+                iconPosition.Y + Math.Max(0, (recipeItemContainer.Height - 18) / 2),
+                Math.Max(60, mItemContainer.Width - mItemContainer.VerticalScrollBar.Width - recipeItemContainer.Width - 24),
+                20
+            );
+            mIngredientNames.Add(nameLabel);
         }
 
         //Show crafting time and chances
@@ -307,6 +333,22 @@ public partial class CraftingWindow : Window
 
                 return;
             }
+        }
+
+        var blockReason = GetBlockReason(craftDescriptor);
+        if (mBlockLabel != null)
+        {
+            mBlockLabel.Text = blockReason ?? string.Empty;
+        }
+
+        if (!IsCrafting)
+        {
+            mCraft.IsDisabled = blockReason != null;
+        }
+
+        if (blockReason != null)
+        {
+            craftableQuantity = 0;
         }
 
         mCraftAll.IsHidden = mJournalMode || craftableQuantity < 2;
@@ -509,13 +551,16 @@ public partial class CraftingWindow : Window
     protected override void EnsureInitialized()
     {
         LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+        EnlargeLayout();
 
         if (Globals.ActiveCraftingTable.Crafts is not { Count: > 0 } craftRecipeDescriptorIds)
         {
+            ShowEmptyMessage();
             return;
         }
 
         CraftingRecipeDescriptor? craftRecipeDescriptorToLoad = null;
+        CraftingRecipeDescriptor? firstRecipe = null;
         foreach (var craftRecipeDescriptorId in craftRecipeDescriptorIds)
         {
             if (!CraftingRecipeDescriptor.TryGet(craftRecipeDescriptorId, out var craftRecipeDescriptor))
@@ -527,22 +572,114 @@ public partial class CraftingWindow : Window
                 continue;
             }
 
-            var craftNumber = Math.Max(1, mRecipes.RowCount + 1);
-            var craftingRecipeRow = mRecipes.AddRow(
-                Strings.Crafting.RecipeListEntry.ToString(craftNumber, craftRecipeDescriptor.Name)
-            );
+            var locked = GetBlockReason(craftRecipeDescriptor) != null;
+            var rowText = craftRecipeDescriptor.Profession != 0
+                ? $"{craftRecipeDescriptor.Name}   (niv. {craftRecipeDescriptor.SkillOrange})"
+                : craftRecipeDescriptor.Name;
+            var craftingRecipeRow = mRecipes.AddRow(locked ? $"[verrouillé] {rowText}" : rowText);
             craftingRecipeRow.UserData = craftRecipeDescriptor;
-            ApplyDifficultyColor(craftingRecipeRow, craftRecipeDescriptor);
+            if (locked)
+            {
+                craftingRecipeRow.SetTextColor(new Color(255, 105, 105, 105));
+            }
+            else
+            {
+                ApplyDifficultyColor(craftingRecipeRow, craftRecipeDescriptor);
+                craftRecipeDescriptorToLoad ??= craftRecipeDescriptor;
+            }
+
             craftingRecipeRow.DoubleClicked += CraftingRecipeRowOnClicked;
             craftingRecipeRow.Clicked += CraftingRecipeRowOnClicked;
 
-            craftRecipeDescriptorToLoad ??= craftRecipeDescriptor;
+            firstRecipe ??= craftRecipeDescriptor;
         }
 
+        // Prefer the first recipe the player can actually craft; otherwise show the first locked one.
+        craftRecipeDescriptorToLoad ??= firstRecipe;
         if (craftRecipeDescriptorToLoad is not null)
         {
             LoadCraftRecipe(craftRecipeDescriptorToLoad);
         }
+        else
+        {
+            ShowEmptyMessage();
+        }
+    }
+
+    private void EnlargeLayout()
+    {
+        SetSize(Width + ExtraWidth, Height + ExtraHeight);
+        Align.Center(this);
+
+        mRecipes.SetSize(mRecipes.Width + ListExtraWidth, mRecipes.Height + ExtraHeight);
+
+        foreach (var control in new Base[] { mLblProduct, mLblCraftingChance, mLblDestroyMaterialsChance, mLblCraftingTime, mLblIngredients })
+        {
+            control.SetBounds(control.X + RightPanelShift, control.Y, control.Width + RightPanelExtraWidth, control.Height);
+        }
+
+        mItemContainer.SetBounds(
+            mItemContainer.X + RightPanelShift,
+            mItemContainer.Y,
+            mItemContainer.Width + RightPanelExtraWidth,
+            mItemContainer.Height + ExtraHeight - 30
+        );
+
+        foreach (var control in new Base[] { mCraft, mCraftAll, mBarContainer })
+        {
+            control.SetBounds(control.X + RightPanelShift + RightPanelExtraWidth, control.Y + ExtraHeight, control.Width, control.Height);
+        }
+
+        mBlockLabel = new Label(this, "BlockReasonLabel")
+        {
+            Font = mLblProduct.Font,
+            TextColor = new Color(255, 230, 150, 60),
+            Text = string.Empty,
+        };
+        mBlockLabel.SetBounds(
+            mItemContainer.X,
+            mItemContainer.Y + mItemContainer.Height + 4,
+            mItemContainer.Width,
+            22
+        );
+    }
+
+    private void ShowEmptyMessage()
+    {
+        mEmptyLabel = new Label(this, "EmptyRecipesLabel")
+        {
+            Font = mLblProduct.Font,
+            TextColor = new Color(255, 200, 200, 200),
+            Text = "Aucune recette disponible ici.\nApprends ce métier auprès du formateur.",
+        };
+        mEmptyLabel.SetBounds(mRecipes.X + 8, mRecipes.Y + 30, mRecipes.Width - 16, 60);
+    }
+
+    /// <summary>Why this recipe cannot be crafted by the local player yet, or null when it can.</summary>
+    private static string? GetBlockReason(CraftingRecipeDescriptor recipe)
+    {
+        if (recipe.Profession == 0 || Globals.Me is not { } player)
+        {
+            return null;
+        }
+
+        var name = Professions.GetName((Profession)recipe.Profession);
+        if (!player.ProfessionSkills.TryGetValue(recipe.Profession, out var skill))
+        {
+            return $"Apprends le métier {name} auprès d'un formateur.";
+        }
+
+        if (player.KnownRecipeIds.Contains(recipe.Id))
+        {
+            return null;
+        }
+
+        if (skill < recipe.SkillOrange)
+        {
+            return $"{name} niveau {recipe.SkillOrange} requis (actuel : {skill}).";
+        }
+
+        return recipe.Trainable ? null : "Recette à apprendre auprès d'un formateur.";
     }
 
     /// <summary>WoW colours: orange = always raises the skill, yellow = often, green = rarely, grey = never.</summary>

@@ -1770,8 +1770,9 @@ public static partial class PacketSender
             foreach (var craft in table.Crafts)
             {
                 var craftBase = CraftingRecipeDescriptor.Get(craft);
-                // Profession recipes are only listed once the player knows them (WoW-style recipe book).
-                if (!(craftBase != null && player.KnowsRecipe(craftBase) &&
+                // Locked profession recipes stay listed (the client greys them out and shows what is missing);
+                // Player.CraftItem still refuses to craft them.
+                if (!(craftBase != null &&
                       Conditions.MeetsConditionLists(craftBase.CraftingRequirements, player, null)))
                 {
                     playerTable.Crafts.Remove(craft);
